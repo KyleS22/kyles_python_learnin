@@ -16,29 +16,42 @@ from kyles_python import sorts
 
 class TestSort:
 
-    def test_bubble_sort(self):
+    @pytest.fixture
+    def simple_lists(self):
+        cases = []
 
-        list = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        sorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        scrambled = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-        assert sorts.bubble_sort(list) == sorted
+        cases.append((scrambled, expected))
 
-        list = []
-        sorted = []
+        scrambled = []
+        expected = []
 
-        assert sorts.bubble_sort(list) == sorted
+        cases.append((scrambled, expected))
 
-        list = ['d', 'b', 'g', 'f', 'c', 'a', 'e']
-        sorted = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        scrambled = ['d', 'b', 'g', 'f', 'c', 'a', 'e']
+        expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
-        assert sorts.bubble_sort(list) == sorted
+        cases.append((scrambled, expected))
 
-        list = ["cat", "cow", "car", "bat", "rat", "spaghetti"]
-        sorted = ["bat", "car", "cat", "cow", "rat", "spaghetti"]
+        scrambled = ["cat", "cow", "car", "bat", "rat", "spaghetti"]
+        expected = ["bat", "car", "cat", "cow", "rat", "spaghetti"]
 
-        assert sorts.bubble_sort(list) == sorted
+        cases.append((scrambled, expected))
 
-        list = [1, 2, 4, 3, 1, 2, 3, 5]
-        sorted = [1, 1, 2, 2, 3, 3, 4, 5]
+        scrambled = [1, 2, 4, 3, 1, 2, 3, 5]
+        expected = [1, 1, 2, 2, 3, 3, 4, 5]
 
-        assert sorts.bubble_sort(list) == sorted
+        cases.append((scrambled, expected))
+
+        return cases
+
+    def test_bubble_sort(self, simple_lists):
+
+        for scrambled, expected in simple_lists:
+            assert sorts.bubble_sort(scrambled) == expected
+
+    def test_merge_sort(self, simple_lists):
+        for scrambled, expected in simple_lists:
+            assert sorts.merge_sort(scrambled) == expected
