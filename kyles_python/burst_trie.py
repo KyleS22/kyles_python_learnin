@@ -178,11 +178,69 @@ class TrieNode():
 
         return out
 
-    # TODO: Depth First Traversal
+    def dft(self):
+        """Return items in depth first traversal order.
+
+        Returns: A list of the strings in depth first traversal order
+
+        """
+
+        if self._is_root:
+            value = ""
+        else:
+            value = self.value
+
+        child_words = []
+        words = []
+
+        if self.completes_string:
+            words.append(value)
+
+        for child in self.children:
+            if child is not None:
+                child_words.append(child.dft())
+
+        for l in child_words:
+            for w in l:
+                string = value + w
+                words.append(string)
+
+        for suffix in self._container.get_suffixes():
+            words.append(value + suffix)
+
+        return words
+
+    def search(self, word):
+        """Search for the given word in the trie.
+
+        Args:
+            word (string): The word to search for.
+
+        Returns: True if the word exists, False otherwise.
+
+        """
+        word = word.lower()
+
+        found = self._container.search(word)
+
+        first_char = word[0]
+        string = word[1:]
+
+
+        if len(word) == 1 and word[0] == self.value and self.completes_string:
+            return True
+
+        if found is False:
+            for child in self.children:
+                if child is not None and child.value == first_char:
+
+                    found = child.search(string)
+
+                    break
+
+        return found
 
     # TODO: Remove
-
-    # TODO: Search
 
 class Container():
 
@@ -206,6 +264,7 @@ class Container():
 
         if suffix not in self._suffixes:
             self._suffixes.append(suffix)
+            self._suffixes = sorted(self._suffixes)
 
     def is_full(self):
 
@@ -230,6 +289,24 @@ class Container():
 
         return out
 
+    def get_suffixes(self):
+        return self._suffixes
+
+    def search(self, word):
+        """Search the containter for the given word.
+
+        Args:
+            word (string): The word to search for.
+
+        Returns: True if word appears in sufixes, False otherwise.
+
+        """
+
+        if word in self._suffixes:
+            return True
+        else:
+            return False
+
 if __name__ == "__main__":
 
     t = TrieNode(None, is_root=True)
@@ -250,4 +327,9 @@ if __name__ == "__main__":
     t.insert("studmuffin")
     t.insert("alf")
     t.insert("alfie")
-    print(t)
+    #print(t)
+    print(t.dft())
+
+    print("Search steve: {}".format(t.search("steve")))
+    print("Search xbox: {}".format(t.search("Xbox")))
+    print("Search potato: {}".format(t.search("potato")))
