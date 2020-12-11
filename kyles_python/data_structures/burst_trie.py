@@ -11,6 +11,7 @@ Description: Implementation of a Burst Trie data-structure.
 ENGLISH = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
+
 class TrieNode():
 
     """Represents a Trie Node
@@ -50,7 +51,6 @@ class TrieNode():
         if self.children is None:
             self.children = [None for i in self.alphabet]
 
-
     @property
     def value(self):
         return self.__value
@@ -73,8 +73,8 @@ class TrieNode():
         return self.__children
 
     @children.setter
-    def children(self, l):
-        self.__children = l
+    def children(self, children):
+        self.__children = children
 
     @property
     def completes_string(self):
@@ -112,7 +112,6 @@ class TrieNode():
 
         first_char = string[0]
         index = self.alphabet.index(first_char)
-
 
         if self._is_root:
             self._insert_idx(index, string, to_container=False)
@@ -200,8 +199,8 @@ class TrieNode():
             if child is not None:
                 child_words.append(child.dft())
 
-        for l in child_words:
-            for w in l:
+        for cw in child_words:
+            for w in cw:
                 string = value + w
                 words.append(string)
 
@@ -219,13 +218,16 @@ class TrieNode():
         Returns: True if the word exists, False otherwise.
 
         """
+
+        if len(word) == 0 and self.completes_string:
+            return True
+
         word = word.lower()
 
         found = self._container.search(word)
 
         first_char = word[0]
         string = word[1:]
-
 
         if len(word) == 1 and word[0] == self.value and self.completes_string:
             return True
@@ -240,17 +242,97 @@ class TrieNode():
 
         return found
 
-    # TODO: Remove
+    def remove(self, word):
+        """Remove a word from the trie.
+
+        Args:
+            word (string): The word to remove.
+
+        Returns: True if the word was removed successfully.
+
+        """
+
+        if not self.search(word):
+            return False
+
+        else:
+            self._remove_help(word)
+            return True
+
+    def _remove_help(self, word):
+        """Remove a word from the trie.
+
+        Args:
+            word (string): The word to remove.
+
+        Returns: True if the current node can be removed.
+
+        """
+        word = word.lower()
+
+        container_found = self._container.search(word)
+        remove_container = self._container.remove(word)
+
+        first_char = word[0]
+        string = word[1:]
+
+        if container_found and remove_container:
+
+            # We removed the word from the container, and we no longer need
+            # this node for anything
+            if len(self.children) == 0 and not self.completes_string:
+                return True
+
+            # We removed the word from the container, but this node completes
+            # another string
+            elif len(self.children) == 0 and self.completes_string:
+                return False
+
+            # We removed the word from the container, but this node has
+            # children
+            elif len(self.children) > 0:
+                return False
+
+        elif container_found and not remove_container:
+            # we removed the word from the container, but we still need this
+            # node
+            return False
+
+        # We did not find the word in the container
+        elif not container_found:
+
+            # The word is 1 character, and we are it baby!
+            if (len(word) == 1 and word[0] == self.value and
+                    self.completes_string):
+
+                self.completes_string = False
+
+                if len(self.children) == 0:
+                    return True
+                else:
+                    return False
+
+            # Remove from children
+            else:
+                for child in self.children:
+                    if child is not None and child.value == first_char:
+                        remove_child = child._remove_help(string)
+
+                        if remove_child:
+                            self.children.remove(child)
+
+                            return False
+
 
 class Container():
 
     """Container for suffixes"""
 
-    def __init__(self):
+    def __init__(self, capacity=5):
         """Create a new container. """
 
         self._suffixes = []
-        self._capacity = 5
+        self._capacity = capacity
 
     def insert(self, suffix):
         """Insert a new suffix.
@@ -307,6 +389,25 @@ class Container():
         else:
             return False
 
+    def remove(self, word):
+        """Remove the word from the container.
+
+        Args:
+            word (string): The word to remove.
+
+        Returns: True if the container can be removed.
+
+        """
+        if word in self._suffixes:
+            self._suffixes.remove(word)
+
+        if len(self._suffixes) == 0:
+            return True
+
+        else:
+            return False
+
+
 if __name__ == "__main__":
 
     t = TrieNode(None, is_root=True)
@@ -327,9 +428,29 @@ if __name__ == "__main__":
     t.insert("studmuffin")
     t.insert("alf")
     t.insert("alfie")
-    #print(t)
+    # print(t)
     print(t.dft())
 
     print("Search steve: {}".format(t.search("steve")))
     print("Search xbox: {}".format(t.search("Xbox")))
     print("Search potato: {}".format(t.search("potato")))
+
+    print("\nRemove alfie")
+    t.remove("alfie")
+    print(t.dft())
+
+    print("\nRemove potato")
+    t.remove("potato")
+    print(t.dft())
+
+    print("\nRemove steve")
+    t.remove("steve")
+    print(t.dft())
+
+    print("\nRemove alpaca")
+    t.remove("alpaca")
+    print(t.dft())
+
+    print("\nRemove sing")
+    t.remove("sing")
+    print(t.dft())
