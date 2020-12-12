@@ -47,6 +47,17 @@ class TestSort:
 
         return cases
 
+    @pytest.fixture
+    def word_lists(self):
+        cases = []
+
+        scrambled = ["cat", "cow", "car", "bat", "rat", "spaghetti"]
+        expected = ["bat", "car", "cat", "cow", "rat", "spaghetti"]
+
+        cases.append((scrambled, expected))
+
+        return cases
+
     def test_bubble_sort(self, simple_lists):
 
         for scrambled, expected in simple_lists:
@@ -55,3 +66,7 @@ class TestSort:
     def test_merge_sort(self, simple_lists):
         for scrambled, expected in simple_lists:
             assert sorts.merge_sort(scrambled) == expected
+
+    def test_burst_sort(self, word_lists):
+        for scrambled, expected in word_lists:
+            assert sorts.burst_sort(scrambled) == expected

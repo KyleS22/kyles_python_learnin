@@ -8,6 +8,7 @@ Date: 11-09-2020
 Description: Various Sorting Algorithms
 
 """
+from kyles_python.data_structures.burst_trie import TrieNode, ENGLISH
 
 
 def bubble_sort(input_list):
@@ -61,6 +62,29 @@ def merge_sort(input_list):
     right = merge_sort(right)
 
     return _merge(left, right)
+
+
+def burst_sort(input_list, alphabet=ENGLISH):
+    """Burst sort.
+    Works by adding input items to a burst trie and then returning the depth
+    first traversal of the trie.
+
+    Args:
+        input_list (list): A list of strings to sort that adhere to the given
+                           alphabet.
+
+    KWargs:
+        alphabet (list): A list of valid characters for the sorting alphabet.
+                         Default is english.
+
+    Returns: The sorted items as a list
+    """
+    t = TrieNode(None, is_root=True, alphabet=alphabet)
+
+    for word in input_list:
+        t.insert(word)
+
+    return t.dft()
 
 
 def _split(input_list):
