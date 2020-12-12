@@ -103,6 +103,8 @@ class TrieNode():
 
         Returns: None
         """
+        string = string.lower()
+
         if len(string) == 0:
             self.completes_string = True
             return
@@ -221,6 +223,8 @@ class TrieNode():
 
         if len(word) == 0 and self.completes_string:
             return True
+        elif len(word) == 0:
+            return False
 
         word = word.lower()
 
@@ -228,9 +232,6 @@ class TrieNode():
 
         first_char = word[0]
         string = word[1:]
-
-        if len(word) == 1 and word[0] == self.value and self.completes_string:
-            return True
 
         if found is False:
             for child in self.children:
@@ -268,29 +269,43 @@ class TrieNode():
         Returns: True if the current node can be removed.
 
         """
+
         word = word.lower()
+
+        num_children = 0
+
+        for child in self.children:
+            if child is not None:
+                num_children += 1
+
+        if len(word) == 0 and self.completes_string:
+            self.completes_string = False
+
+            if len(self._container.get_suffixes()) == 0 and num_children == 0:
+                return True
+            else:
+                return False
 
         container_found = self._container.search(word)
         remove_container = self._container.remove(word)
 
-        first_char = word[0]
-        string = word[1:]
+
 
         if container_found and remove_container:
 
             # We removed the word from the container, and we no longer need
             # this node for anything
-            if len(self.children) == 0 and not self.completes_string:
+            if num_children == 0 and not self.completes_string:
                 return True
 
             # We removed the word from the container, but this node completes
             # another string
-            elif len(self.children) == 0 and self.completes_string:
+            elif num_children == 0 and self.completes_string:
                 return False
 
             # We removed the word from the container, but this node has
             # children
-            elif len(self.children) > 0:
+            else:
                 return False
 
         elif container_found and not remove_container:
@@ -299,28 +314,18 @@ class TrieNode():
             return False
 
         # We did not find the word in the container
-        elif not container_found:
+        else:
+            for child in self.children:
+                if child is not None and child.value == word[0]:
+                    remove_child = child._remove_help(word[1:])
 
-            # The word is 1 character, and we are it baby!
-            if (len(word) == 1 and word[0] == self.value and
-                    self.completes_string):
+                    if remove_child:
+                        self.children[self.children.index(child)] = None
 
-                self.completes_string = False
-
-                if len(self.children) == 0:
-                    return True
-                else:
-                    return False
-
-            # Remove from children
-            else:
-                for child in self.children:
-                    if child is not None and child.value == first_char:
-                        remove_child = child._remove_help(string)
-
-                        if remove_child:
-                            self.children.remove(child)
-
+                        if (len(self._container.get_suffixes()) == 0 and
+                                num_children - 1 == 0):
+                            return True
+                        else:
                             return False
 
 
@@ -406,51 +411,3 @@ class Container():
 
         else:
             return False
-
-
-if __name__ == "__main__":
-
-    t = TrieNode(None, is_root=True)
-
-    t.insert("steve")
-    t.insert("string")
-    t.insert("sing")
-    t.insert("sang")
-    t.insert("strudel")
-    t.insert("sact")
-    t.insert("potato")
-    t.insert("alfredo")
-    t.insert("alpaca")
-    t.insert("alarm")
-    t.insert("alarming")
-    t.insert("along")
-    t.insert("studabaker")
-    t.insert("studmuffin")
-    t.insert("alf")
-    t.insert("alfie")
-    # print(t)
-    print(t.dft())
-
-    print("Search steve: {}".format(t.search("steve")))
-    print("Search xbox: {}".format(t.search("Xbox")))
-    print("Search potato: {}".format(t.search("potato")))
-
-    print("\nRemove alfie")
-    t.remove("alfie")
-    print(t.dft())
-
-    print("\nRemove potato")
-    t.remove("potato")
-    print(t.dft())
-
-    print("\nRemove steve")
-    t.remove("steve")
-    print(t.dft())
-
-    print("\nRemove alpaca")
-    t.remove("alpaca")
-    print(t.dft())
-
-    print("\nRemove sing")
-    t.remove("sing")
-    print(t.dft())

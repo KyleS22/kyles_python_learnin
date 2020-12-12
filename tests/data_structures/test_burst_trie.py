@@ -135,7 +135,9 @@ class TestBurstTrie:
         test_words = ["steve", "string", "sing", "sang", "strudel",
                       "sact", "potato", "alfredo", "alpaca", "alarm",
                       "alarming", "along", "studabaker", "studmuffin", "alf",
-                      "alfie"]
+                      "alfie", "alfi", "sin", "si", "simple", "sit",
+                      "sith", "sim", "be", "bee", "bet", "betty",
+                      "can", "banana", "cookie"]
 
         for word in test_words:
             t.insert(word)
@@ -145,8 +147,56 @@ class TestBurstTrie:
 
         # Search for all the words
         for word in test_words:
-            print(word)
             assert t.search(word) is True
+
+    def test_remove(self):
+
+        t = TrieNode(None, is_root=True)
+
+        test_words = ["steve", "string", "sing", "sang", "strudel",
+                      "sact", "potato", "alfredo", "alpaca", "alarm",
+                      "alarming", "along", "studabaker", "studmuffin", "alf",
+                      "alfie", "alfi", "sin", "si", "simple", "sit",
+                      "sith", "sim", "be", "bee", "bet", "betty",
+                      "can", "banana", "cookie"]
+
+        for word in test_words:
+            t.insert(word)
+
+        # Remove nonexistant word
+
+        assert t.remove("axle") is False
+
+        remaining_words = test_words.copy()
+
+        for word in test_words:
+
+            assert t.remove(word) is True
+            assert t.search(word) is False
+
+
+            remaining_words.remove(word)
+
+            # Make sure we did not accidentally remove other words.
+            for word2 in remaining_words:
+                assert t.search(word2) is True
+
+        # Some very specific edge cases
+        t.insert("Abe")
+
+        assert t.remove("Abe") is True
+        assert t.search("Abe") is False
+
+        t.insert("Abe")
+        t.insert("Apple")
+        t.insert("Alfredo")
+        t.insert("App")
+        t.insert("Ayoo")
+
+        t.insert("Animal")
+
+        assert t.remove("Animal") is True
+        assert t.search("Animal") is False
 
 class TestContainer:
 
