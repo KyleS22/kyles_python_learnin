@@ -58,6 +58,33 @@ class TestSort:
 
         return cases
 
+    @pytest.fixture
+    def number_lists(self):
+        cases = []
+
+        scrambled = [3, 1, 2, 4, 5, 6, 8, 7, 9, 10]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        cases.append((scrambled, expected))
+
+        scrambled = [1, 2, 4, 3, 1, 2, 3, 5]
+        expected = [1, 1, 2, 2, 3, 3, 4, 5]
+
+        cases.append((scrambled, expected))
+
+        scrambled = [1.1, 1.2, 1.4, 1.3, 1.1, 1.2, 1.3, 1.5]
+        expected = [1.1, 1.1, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5]
+
+        cases.append((scrambled, expected))
+
+        scrambled = []
+        expected = []
+
+        cases.append((scrambled, expected))
+
+        return cases
+
+
     def test_bubble_sort(self, simple_lists):
 
         for scrambled, expected in simple_lists:
@@ -70,3 +97,7 @@ class TestSort:
     def test_burst_sort(self, word_lists):
         for scrambled, expected in word_lists:
             assert sorts.burst_sort(scrambled) == expected
+
+    def test_spaghetti_sort(self, number_lists):
+        for scrambled, expected in number_lists:
+            assert sorts.spaghetti_sort(scrambled) == expected

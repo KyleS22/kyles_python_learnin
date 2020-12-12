@@ -8,6 +8,9 @@ Date: 11-09-2020
 Description: Various Sorting Algorithms
 
 """
+import threading
+import time
+
 from kyles_python.data_structures.burst_trie import TrieNode, ENGLISH
 
 
@@ -85,6 +88,50 @@ def burst_sort(input_list, alphabet=ENGLISH):
         t.insert(word)
 
     return t.dft()
+
+
+def spaghetti_sort(input_list):
+    """A simulated spaghetti sort.  (This is next to useless.)
+
+    Args:
+        input_list (list): A list of numbers to sort.
+
+    Returns: The sorted items as a list.
+
+    """
+
+    if len(input_list) == 0:
+        return input_list
+
+    m = max(input_list)
+
+    queue = []
+
+    for i in range(len(input_list)):
+        x = input_list[i]
+        t = threading.Thread(target=_spaghetti_thread, args=(x, x/m, queue))
+        t.daemon = True
+        t.setDaemon(True)
+        t.start()
+
+    time.sleep(m/m + 0.01)
+
+    return queue
+
+
+def _spaghetti_thread(x, units, queue):
+    """Create a thread for spaghetti sort.
+
+    Args:
+        x (number): The number we are sorting.
+        units (int): The number of spaghetti units.
+    Returns: x
+
+    """
+    time.sleep(units)
+    queue.append(x)
+
+    return None
 
 
 def _split(input_list):
