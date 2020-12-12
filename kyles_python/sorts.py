@@ -92,7 +92,7 @@ def burst_sort(input_list, alphabet=ENGLISH):
 
 def spaghetti_sort(input_list):
     """A simulated spaghetti sort.  (This is next to useless.)
-
+    O(max(input_list))
     Args:
         input_list (list): A list of numbers to sort.
 
@@ -109,14 +109,45 @@ def spaghetti_sort(input_list):
 
     for i in range(len(input_list)):
         x = input_list[i]
-        t = threading.Thread(target=_spaghetti_thread, args=(x, x/m * 2, queue))
+        t = threading.Thread(target=_spaghetti_thread,
+                             args=(x, x/m * 2, queue))
         t.daemon = True
         t.setDaemon(True)
         t.start()
 
-    time.sleep(m/m* 2 + 0.01)
+    time.sleep(m/m * 2 + 0.01)
 
     return queue
+
+
+def pigeonhole_sort(input_list):
+    """Pigeonhole sort is suitable for lists of (key, value) pairs, where the
+    number of possible keys (m) is is roughly the same as the number of entries
+    (n).  O(m + n)
+
+    Args:
+        input_list (list): The input list of (key, value) tuples.
+
+    Returns: The sorted list.
+
+    """
+
+    start = min([x[0] for x in input_list])
+    size = max([x[0] for x in input_list]) - start + 1
+
+    pigeonholes = [[] for i in range(size)]
+
+    for key, value in input_list:
+        i = key - start
+        pigeonholes[i].append((key, value))
+
+    sorted_list = []
+
+    for p in pigeonholes:
+        for x in p:
+            sorted_list.append(x)
+
+    return sorted_list
 
 
 def _spaghetti_thread(x, units, queue):

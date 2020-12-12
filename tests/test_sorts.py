@@ -84,6 +84,19 @@ class TestSort:
 
         return cases
 
+    @pytest.fixture
+    def key_value_lists(self):
+        cases = []
+
+        scrambled = [(3, 'a'), (2, 'b'), (3, 'x'), (1, 'y'), (5, 'c'),
+                     (1, 'd')]
+
+        expected = [(1, 'y'), (1, 'd'), (2, 'b'), (3, 'a'), (3, 'x'), (5, 'c')]
+
+        cases.append((scrambled, expected))
+
+
+        return cases
 
     def test_bubble_sort(self, simple_lists):
 
@@ -101,3 +114,7 @@ class TestSort:
     def test_spaghetti_sort(self, number_lists):
         for scrambled, expected in number_lists:
             assert sorts.spaghetti_sort(scrambled) == expected
+
+    def test_pigeonhole_sort(self, key_value_lists):
+        for scrambled, expected in key_value_lists:
+            assert sorts.pigeonhole_sort(scrambled) == expected
