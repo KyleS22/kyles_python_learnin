@@ -109,12 +109,12 @@ def spaghetti_sort(input_list):
 
     for i in range(len(input_list)):
         x = input_list[i]
-        t = threading.Thread(target=_spaghetti_thread, args=(x, x/m, queue))
+        t = threading.Thread(target=_spaghetti_thread, args=(x, x/m * 2, queue))
         t.daemon = True
         t.setDaemon(True)
         t.start()
 
-    time.sleep(m/m + 0.01)
+    time.sleep(m/m* 2 + 0.01)
 
     return queue
 
