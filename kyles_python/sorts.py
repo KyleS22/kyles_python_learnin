@@ -11,6 +11,7 @@ Description: Various Sorting Algorithms
 import threading
 import time
 import heapq
+import math
 
 from kyles_python.data_structures.burst_trie import TrieNode, ENGLISH
 
@@ -150,6 +151,7 @@ def pigeonhole_sort(input_list):
 
     return sorted_list
 
+
 def patience_sort(input_list):
     """Patience sort, based on the cardgame.
 
@@ -166,7 +168,8 @@ def patience_sort(input_list):
         if len(piles) == 0:
             piles.append([x])
         else:
-            # Find leftmost pile whose value is >= x using binary search O(n log n)
+            # Find leftmost pile whose value is >= x using binary search
+            # O(n log n)
 
             p_index = _patience_binary_search(piles, x)
 
@@ -176,8 +179,7 @@ def patience_sort(input_list):
                 piles[p_index].append(x)
 
     # Merge piles using priority queue O(n log n)
-    # TODO
-    elements = [ (p[0], p) for p in piles]
+    elements = [(p[0], p) for p in piles]
     heapq.heapify(elements)
 
     sorted_list = []
@@ -189,6 +191,49 @@ def patience_sort(input_list):
             heapq.heappush(elements, (p[0], p))
 
     return sorted_list
+
+
+def stooge_sort(input_list):
+    """Stooge sort the list.  This is a recursive sorting algorithm with awful
+    time complexity, O(n^(log 3 / log 1.5)).  Still interesting though.
+
+    Args:
+        input_list (list): A list of items to be sorted.
+
+    Returns: The sorted list.
+
+    """
+    if len(input_list) == 0:
+        return input_list
+
+    # If the first item is bigger than the last, swap them
+    if input_list[0] > input_list[-1]:
+        temp = input_list[-1]
+        input_list[-1] = input_list[0]
+        input_list[0] = temp
+
+    if len(input_list) >= 3:
+        split = math.ceil(len(input_list) * (2/3))
+
+        # Sort the first 2/3 of the list
+        first_sort = stooge_sort(input_list[:split])
+
+        input_list[:split] = first_sort
+
+        # Sort the last 2/3 of the list
+        split = math.floor(len(input_list) / 3)
+
+        second_sort = stooge_sort(input_list[split:])
+        input_list[split:] = second_sort
+
+        # Sorth the first 2/3 again
+        split = math.ceil(len(input_list) * (2/3))
+
+        third_sort = stooge_sort(input_list[:split])
+        input_list[:split] = third_sort
+
+    return input_list
+
 
 def _patience_binary_search(piles, x):
     """Search for the correct pile for x.
@@ -209,13 +254,12 @@ def _patience_binary_search(piles, x):
         if piles[mid][-1] < x:
             left = mid + 1
         elif piles[mid][-1] > x:
-            right = mid -1
+            right = mid - 1
 
         else:
             return mid
 
     return None
-
 
 
 def _spaghetti_thread(x, units, queue):

@@ -110,7 +110,6 @@ class TestSort:
 
         cases.append((scrambled, expected))
 
-
         return cases
 
     def test_bubble_sort(self, simple_lists):
@@ -137,3 +136,7 @@ class TestSort:
     def test_patience_sort(self, number_lists):
         for scrambled, expected in number_lists:
             assert sorts.patience_sort(scrambled) == expected
+
+    def test_stooge_sort(self, simple_lists):
+        for scrambled, expected in simple_lists:
+            assert sorts.stooge_sort(scrambled) == expected
