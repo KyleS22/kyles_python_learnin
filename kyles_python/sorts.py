@@ -10,6 +10,7 @@ Description: Various Sorting Algorithms
 """
 import threading
 import time
+import heapq
 
 from kyles_python.data_structures.burst_trie import TrieNode, ENGLISH
 
@@ -148,6 +149,73 @@ def pigeonhole_sort(input_list):
             sorted_list.append(x)
 
     return sorted_list
+
+def patience_sort(input_list):
+    """Patience sort, based on the cardgame.
+
+    Args:
+        input_list (list): A list of integers.
+
+    Returns: Sorted list.
+
+    """
+
+    piles = []
+
+    for x in input_list:
+        if len(piles) == 0:
+            piles.append([x])
+        else:
+            # Find leftmost pile whose value is >= x using binary search O(n log n)
+
+            p_index = _patience_binary_search(piles, x)
+
+            if p_index is None:
+                piles.append([x])
+            else:
+                piles[p_index].append(x)
+
+    # Merge piles using priority queue O(n log n)
+    # TODO
+    elements = [ (p[0], p) for p in piles]
+    heapq.heapify(elements)
+
+    sorted_list = []
+    while(len(elements) > 0):
+        val, p = heapq.heappop(elements)
+        sorted_list.append(val)
+        p.pop()
+        if len(p) > 0:
+            heapq.heappush(elements, (p[0], p))
+
+    return sorted_list
+
+def _patience_binary_search(piles, x):
+    """Search for the correct pile for x.
+
+    Args:
+        piles (list): A list of piles.
+        x (int): The number to add to the piles.
+
+    Returns: The index of the correct pile, or none if no pile works.
+
+    """
+    left = 0
+    right = len(piles) - 1
+
+    while left < right:
+        mid = (left + right) // 2
+
+        if piles[mid][-1] < x:
+            left = mid + 1
+        elif piles[mid][-1] > x:
+            right = mid -1
+
+        else:
+            return mid
+
+    return None
+
 
 
 def _spaghetti_thread(x, units, queue):

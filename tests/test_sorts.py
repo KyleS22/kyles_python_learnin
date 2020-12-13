@@ -77,6 +77,21 @@ class TestSort:
 
         cases.append((scrambled, expected))
 
+        scrambled = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        cases.append((scrambled, expected))
+
+        scrambled = [10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 1]
+        expected = [1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        cases.append((scrambled, expected))
+
+        scrambled = [52, 2, 19, 10, 32, 74, 32, 14, 13, 2, 1, 74, 11, 102]
+        expected = [1, 2, 2,  10, 11,  13, 14, 19, 32, 32, 52, 74, 74, 102]
+
+        cases.append((scrambled, expected))
+
         scrambled = []
         expected = []
 
@@ -118,3 +133,7 @@ class TestSort:
     def test_pigeonhole_sort(self, key_value_lists):
         for scrambled, expected in key_value_lists:
             assert sorts.pigeonhole_sort(scrambled) == expected
+
+    def test_patience_sort(self, number_lists):
+        for scrambled, expected in number_lists:
+            assert sorts.patience_sort(scrambled) == expected
