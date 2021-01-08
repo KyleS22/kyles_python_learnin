@@ -234,6 +234,96 @@ def stooge_sort(input_list):
 
     return input_list
 
+def shellsort(input_list):
+    """Shellsort the given list.  Using sedgewick gap sequence, complexity is
+    O(N^(4/3))
+
+    Args:
+        input_list (list): The list to sort.
+
+    Returns: The sorted list.
+
+    """
+
+    gaps = reversed(_sedgewick_gap(len(input_list)))
+
+    # We sort interleaving lists in gaps
+    for gap in gaps:
+
+        # Gapped insertion sort
+        i = gap
+
+        # i starts on the second element of the first gapped list with our
+        # current gap size
+        while i < len(input_list):
+
+            # We save the current element
+            temp = input_list[i]
+
+            j = i
+
+            # j starts on the same place, and we compare the first element in
+            # our gapped list to the current one.  If it is bigger, set it to
+            # the current item, then move j
+            # When the list is large, i will eventually be incremented to the
+            # third item of the gapped list, where j will then be decremented
+            # to sort the previous elements in the gapped list.
+            while j >= gap and input_list[j - gap] > temp:
+
+                input_list[j] = input_list[j - gap]
+
+                j -= gap
+
+            input_list[j] = temp
+            i += 1
+
+        # At this point, the list has been sorted as some number of gapped
+        # lists, meaning that if gap = 5, the first gapped list is made up of
+        # input_list[0], input_list[5], input_list[10], etc.  Similarily, the
+        # second gapped list is made of input_list[1], input_list[6],
+        # input_list[11].  Each of these gapped lists are sorted at this point,
+        # so if we sort with the next smaller gap size, the sort will be faster
+        # as some of the elements are already sorted.
+
+    return input_list
+
+
+# =====================================================================
+# Helper Functions
+# =====================================================================
+
+def _sedgewick_gap(len):
+    """Compute the sedgewick gap sequence for a given list for shellsort.
+
+    Args:
+        len (int): The length of the input list.
+
+    Returns: The sedgewick gap sequence as a list.
+
+    """
+
+    largest_gap = 1
+
+    k = 1
+    cur_gap = 1
+
+    sequence = []
+
+    while largest_gap < len/3:
+        sequence.append(cur_gap)
+
+        # Even
+        if k % 2 == 0:
+            cur_gap = 9 * (2**k - 2**(k/2)) + 1
+        # Odd
+        else:
+            cur_gap = 8 * 2**k - 6 * 2**((k + 1)/2) + 1
+
+        k += 1
+        largest_gap = cur_gap
+
+    return sequence
+
 
 def _patience_binary_search(piles, x):
     """Search for the correct pile for x.

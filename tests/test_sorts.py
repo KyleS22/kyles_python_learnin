@@ -140,3 +140,22 @@ class TestSort:
     def test_stooge_sort(self, simple_lists):
         for scrambled, expected in simple_lists:
             assert sorts.stooge_sort(scrambled) == expected
+
+    def test_shellsort(self, simple_lists):
+        for scrambled, expected in simple_lists:
+            assert sorts.shellsort(scrambled) == expected
+
+
+class TestHelpers:
+
+    def test_sedgewick(self):
+
+        assert sorts._sedgewick_gap(5) == [1]
+
+        assert sorts._sedgewick_gap(16) == [1, 5]
+
+        assert sorts._sedgewick_gap(58) == [1, 5, 19]
+
+        assert sorts._sedgewick_gap(124) == [1, 5, 19, 41]
+
+        assert sorts._sedgewick_gap(330) == [1, 5, 19, 41, 109]
