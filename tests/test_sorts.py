@@ -141,9 +141,17 @@ class TestSort:
         for scrambled, expected in simple_lists:
             assert sorts.stooge_sort(scrambled) == expected
 
-    def test_shellsort(self, simple_lists):
+    def test_shellsort(self, simple_lists, number_lists):
         for scrambled, expected in simple_lists:
             assert sorts.shellsort(scrambled) == expected
+
+        for scrambled, expected in number_lists:
+            assert sorts.shellsort(scrambled) == expected
+
+    def test_bogosort(self, simple_lists, number_lists):
+
+        for scrambled, expected in simple_lists:
+            assert sorts.bogosort(scrambled) == expected
 
 
 class TestHelpers:

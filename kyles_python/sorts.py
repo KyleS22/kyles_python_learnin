@@ -14,6 +14,7 @@ import heapq
 import math
 
 from kyles_python.data_structures.burst_trie import TrieNode, ENGLISH
+from random import shuffle
 
 
 def bubble_sort(input_list):
@@ -117,7 +118,7 @@ def spaghetti_sort(input_list):
         t.setDaemon(True)
         t.start()
 
-    time.sleep(m/m * 2 + 0.01)
+    time.sleep(m/m * 2 + 0.1)
 
     return queue
 
@@ -234,6 +235,7 @@ def stooge_sort(input_list):
 
     return input_list
 
+
 def shellsort(input_list):
     """Shellsort the given list.  Using sedgewick gap sequence, complexity is
     O(N^(4/3))
@@ -288,9 +290,39 @@ def shellsort(input_list):
     return input_list
 
 
+def bogosort(input_list):
+    """Inefficient sort where we randomly permute the list until it is sorted.
+
+    Args:
+        input_list (list): The list to sort.
+
+    Returns: The sorted list.
+
+    """
+
+    while not _is_sorted(input_list):
+        shuffle(input_list)
+
+    return input_list
+
 # =====================================================================
 # Helper Functions
 # =====================================================================
+
+
+def _is_sorted(input_list):
+    """Check if the list is sorted.
+
+    Args:
+        input_list (list): The list to check.
+
+    Returns: True if sorted, False if not.
+
+    """
+
+    return all(input_list[i] <= input_list[i + 1]
+               for i in range(len(input_list) - 1))
+
 
 def _sedgewick_gap(len):
     """Compute the sedgewick gap sequence for a given list for shellsort.
